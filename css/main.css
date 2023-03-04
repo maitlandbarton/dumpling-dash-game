@@ -1,3 +1,26 @@
 body {
-    background-color: fuchsia;
+    background-color: skyblue;
+    position: absolute;
+}
+
+#board {
+    width: 100vw;
+    height: 100vh;
+    background-color: lightcoral;
+    position: relative;
+}
+
+#player {
+    height: 10vh;
+    width: 20vw;
+    background-color: cyan;
+    position: absolute;
+    bottom: 0;
+}
+
+.obstacle {
+    background-color: blueviolet;
+    position: absolute;
+    height: 10vh;
+    width: 20vw;
 }
