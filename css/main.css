@@ -24,3 +24,10 @@ body {
     height: 10vh;
     width: 20vw;
 }
+
+.reward {
+    background-color: orange;
+    position: absolute;
+    height: 5vh;
+    width: 5vw;
+}

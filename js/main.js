@@ -62,40 +62,41 @@ class Obstacle {
     this.posX += this.move;
     this.obstacleElm.style.left = this.posX + "vw";
   }
-
-  
 }
 
+class Dumpling {
+    constructor() {
+        this.positionX = null;
+        this.positionY = null;
+        this.dumplingElm = null;
+        this.boardElm = document.getElementById("board");
 
-/*
-randomPosition() {
-    let posibility = Math.floor(Math.random() * 4); // 4==> one per each border
-
-    switch (posibility) {
-      case 0:
-        this.coordXY[0] = Math.random() * (800 - this.width);
-        this.coordXY[1] = -this.height;
-        break;
-      case 1:
-        this.coordXY[0] = Math.random() * (800 - this.width);
-        this.coordXY[1] = 600 + this.height ; 
-        break;
-      case 2:
-        this.coordXY[0] = -this.width;
-        this.coordXY[1] = Math.random() * (600 - this.height);
-        break;
-      case 3:
-        this.coordXY[0] = 800 +this.width ;
-        this.coordXY[1] = Math.random() * (600 - this.height);
-        break;
+        this.createDumplingElm();
+        this.removeDumplingElm();
     }
-    return this.coordXY; */
+    
+    // adding a new DOM element
+    createDumplingElm() {
+        this.dumplingElm = document.createElement('div');
+        this.dumplingElm.className = 'reward';
+        this.dumplingElm.style.top = Math.floor(Math.random() * 100) + 'vh';
+        this.dumplingElm.style.left = Math.floor(Math.random() * 100) + 'vw';
+        this.boardElm.appendChild(this.dumplingElm);
+    }
+
+    removeDumplingElm() {
+        setInterval(() => {
+            this.dumplingElm.parentNode.removeChild(this.dumplingElm);
+        }, 5000);
+    }
+}
 
 
 class Game {
   constructor() {
     this.player = null;
     this.obstaclesArr = [];
+    this.dumplingsArr = [];
   }
   start() {
     this.player = new Player();
@@ -115,6 +116,11 @@ class Game {
             obstacleInstance.moveObstacle();
         });
     }, 100);
+
+    setInterval(() => {
+        const newDumpling = new Dumpling();
+        this.dumplingsArr.push(newDumpling);
+    }, 3000);
   }
 
   attachEventListeners() {
