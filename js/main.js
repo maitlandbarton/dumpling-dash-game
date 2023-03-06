@@ -30,9 +30,10 @@ class Player {
 class Obstacle {
   constructor() {
     this.posX = null;
-    this.posY = Math.floor(Math.random() * 100);
+    this.posY = Math.floor(Math.random() * 5) * 10 + 10;
     this.obstacleElm = null;
     this.move = null;
+    this.boardElm = document.getElementById("board");
 
     this.createDomElement();
   }
@@ -42,19 +43,18 @@ class Obstacle {
     this.obstacleElm = document.createElement("div");
     this.obstacleElm.className = "obstacle";
 
-    this.obstacleElm.style.bottom = Math.random() * 90 + "vw"; // will need to adjust this after I have made board smaller and centered in screen
+    this.obstacleElm.style.bottom = this.posY + "vw"; // will need to adjust this after I have made board smaller and centered in screen
 
-    const boardElm = document.getElementById("board");
-    boardElm.appendChild(this.obstacleElm);
+    this.boardElm.appendChild(this.obstacleElm);
   }
 
   getObstacleSettings() {
-    if (this.posY % 2 === 0) {
-        this.posX = 100;
-        this.move = -1;
-    } else if (this.posY % 2 === 1) {
+    if (this.posY % 20 === 0) {
+        this.posX = 100; 
+        this.move = -1; // entering from right, moving left. should be removed at far left side.
+    } else {
         this.posX = -20;
-        this.move = 1;
+        this.move = 1; // entering from left, moving right. should be removed at far right side. 
     }
   }
 
@@ -62,12 +62,19 @@ class Obstacle {
     this.posX += this.move;
     this.obstacleElm.style.left = this.posX + "vw";
   }
+
+  removeObstacle() {
+    if (this.posY % 20 === 0 && this.posX <= -5) {
+        this.obstacleElm.remove();
+    } else if (this.posY % 20 !== 0 && this.posX >= 95) {
+        this.obstacleElm.remove();
+    }
+  }
+
 }
 
 class Dumpling {
     constructor() {
-        this.positionX = null;
-        this.positionY = null;
         this.dumplingElm = null;
         this.boardElm = document.getElementById("board");
 
@@ -80,13 +87,13 @@ class Dumpling {
         this.dumplingElm = document.createElement('div');
         this.dumplingElm.className = 'reward';
         this.dumplingElm.style.top = Math.floor(Math.random() * 100) + 'vh';
-        this.dumplingElm.style.left = Math.floor(Math.random() * 100) + 'vw';
+        this.dumplingElm.style.left = Math.floor(Math.random() * 80) + 'vw';
         this.boardElm.appendChild(this.dumplingElm);
     }
 
     removeDumplingElm() {
         setInterval(() => {
-            this.dumplingElm.parentNode.removeChild(this.dumplingElm);
+            this.dumplingElm.remove();
         }, 5000);
     }
 }
@@ -107,14 +114,14 @@ class Game {
       const myObstacle = new Obstacle();
       myObstacle.getObstacleSettings(myObstacle);
       this.obstaclesArr.push(myObstacle);
-    }, 2000);
+    }, 1000 * (Math.floor(Math.random() * 5) + 2));
 
-  
     // interval to move all the divs right or left 
     setInterval(() => {
         this.obstaclesArr.forEach((obstacleInstance) => {
             obstacleInstance.moveObstacle();
-        });
+            obstacleInstance.removeObstacle();
+        })
     }, 100);
 
     setInterval(() => {
@@ -136,10 +143,25 @@ class Game {
       }
     });
   }
+
+  removeObstacle(obstacleInstance) {
+    if (obstacleInstance.posY % 20 === 0 && obstacleInstance.posX <= -5) {
+        obstacleInstance.obstacleElm.remove(); // remove from the dom
+        this.obstaclesArr.shift();
+    }
 }
+
+}
+
+
 
 
 const newGame = new Game();
 newGame.start();
 
+
+/* removeObstacleIfOutside(obstacleInstance){
+        if(obstacleInstance.positionY < 0){
+            obstacleInstance.obstacleElm.remove(); //remove from the dom
+            this.obstaclesArr.shift(); // remove from the array */
 
