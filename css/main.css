@@ -1,18 +1,39 @@
 body {
     background-color: skyblue;
-    position: absolute;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+#container {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#scoreboard {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 50vw;
+    padding: 0;
+    margin-top: 5vh;
 }
 
 #board {
-    width: 100vw;
-    height: 100vh;
+    width: 60vw;
+    height: 70vh;
     background-color: lightcoral;
     position: relative;
+    margin: 0 auto;
+    overflow: hidden;
+    z-index: 0;
 }
 
 #player {
-    height: 10vh;
-    width: 20vw;
     background-color: cyan;
     position: absolute;
     bottom: 0;
@@ -21,13 +42,9 @@ body {
 .obstacle {
     background-color: blueviolet;
     position: absolute;
-    height: 10vh;
-    width: 10vw;
 }
 
 .reward {
     background-color: orange;
     position: absolute;
-    height: 5vh;
-    width: 5vw;
 }
