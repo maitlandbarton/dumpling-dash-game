@@ -49,6 +49,7 @@ class Obstacle {
     this.move = null;
     this.width = 10;
     this.height = 10;
+    this.hasCollided = false;
 
     this.boardElm = document.getElementById("board");
 
@@ -90,6 +91,10 @@ class Obstacle {
     }
   }
 
+  removeObstElm() {
+    this.obstacleElm.remove();
+  }
+
 }
 
 class Dumpling {
@@ -100,6 +105,7 @@ class Dumpling {
         this.positionY = Math.floor(Math.random() * 56 + 15);
         this.width = 5;
         this.height = 5;
+        this.hasCollided = false;
 
         this.createDumplingElm();
         this.removeDumplingElm();
@@ -134,7 +140,10 @@ class Game {
     this.obstaclesArr = [];
     this.dumplingsArr = [];
     this.scoreElm = document.getElementById("score-count");
-    this.livesElm = doucment.getElementById("lives-count");
+    this.livesCount = 3;
+    this.livesElm = document.getElementById("lives-count");
+
+    this.updateLives();
     
   }
   start() {
@@ -153,7 +162,15 @@ class Game {
         this.obstaclesArr.forEach((obstacleInstance) => {
             obstacleInstance.moveObstacle();
             obstacleInstance.removeObstacle();
-            this.detectCollision(obstacleInstance);
+            if (!obstacleInstance.hasCollided) {
+                if (this.detectCollision(obstacleInstance)) {
+                    obstacleInstance.hasCollided = true;
+                    this.livesCount--;
+                    obstacleInstance.removeObstElm();
+                    this.updateLives();
+                    this.loseGame();
+;                } 
+            }
         })
     }, 100);
 
@@ -197,10 +214,12 @@ class Game {
 
   collectDumpling() { // clean this up!!
     this.dumplingsArr.forEach((dumpling) => {
-        if (this.detectCollision(dumpling) === true) {
-            dumpling.removeDumpling();
-            this.dumplingsArr.splice(dumpling, 1);
-            this.addPoints();
+        if (!dumpling.hasCollided) {
+            if (this.detectCollision(dumpling)) {
+                dumpling.hasCollided = true;
+                dumpling.removeDumpling();
+                this.addPoints();
+            }
         }
     });
   }
@@ -212,39 +231,17 @@ class Game {
   }
 
   updateLives () {
-    const subtractLife = parseInt(this.livesElm.textContent,10) - 1;
-    if (this.detectCollision()
+    this.livesElm.innerText = this.livesCount.toString();
+  }
+
+  loseGame() {
+    if (this.livesCount === 0) {
+        window.location.href = "./gameover.html";
+    }
   }
 
 }
 
-
-/* if (this.detectCollision(obstacleInstance) === true) {
-                this.obstaclesArr.splice(obstacleInstance,1);
-            } */
-
 const newGame = new Game();
 newGame.start();
 
- 
- function updateLives () {
-    const livesElm = document.getElementById("lives-count");
-    const subtractLife = parseInt(livesElm.textContent, 10) - 1;
-    /* if (collisionDetection(obstacle) === true) {
-        livesElm.innerText = subtractLife.toString();
-        return subtractLife;
-    }
-     */
- }
-
- /* function loseGame () {
-    if (this.livesElm.innerText === '0') {
-        window.location.href = "./gameover.html";
-    }
- } */
-
- // if collision with obstacle is detected, -1 life
- // starting point for lives is 3
- // have this reflected on the dom as well
-
- // detect game loss once lives = 0
