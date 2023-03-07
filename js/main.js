@@ -40,8 +40,74 @@ class Player {
     }
 }
 
-
 class Obstacle {
+    constructor() {
+        this.positionX = null;
+        this.positionY = null;
+        this.obstacleElm = null;
+        this.width = null;
+        this.height = null;
+        this.className = null;  
+        this.hasCollided = false;
+        this.boardElm = document.getElementById("board");
+    }
+
+    createDomElement() {
+        // prep the dom element
+        this.obstacleElm = document.createElement("div");
+
+        //give attributes
+        this.obstacleElm.className = this.className;
+        this.obstacleElm.style.bottom = this.positionY + 'vh';
+        this.obstacleElm.style.width = this.width + 'vw';
+        this.obstacleElm.style.height = this.height + 'vh';
+
+        // add to DOM
+        this.boardElm.appendChild(this.obstacleElm);
+    }
+
+    removeObstacle() {
+        this.obstacleElm.remove();
+    }
+}
+
+class Dog extends Obstacle {
+    constructor() {
+        super();
+        this.positionY = Math.floor(Math.random() * 6) * 10 + 10;
+        this.width = 10;
+        this.height = 10;
+        this.className = "dog-obstacle";
+        
+        this.move = null;
+        this.createDomElement();
+    }
+    
+    getDogSettings() {
+        if (this.positionY % 20 === 0) {
+            this.positionX = 60;
+            this.move = -1;
+        } else {
+            this.positionX = -5;
+            this.move = 1;
+        }
+    }
+
+    moveDog() {
+        this.positionX += this.move;
+        this.obstacleElm.style.left = this.positionX + "vw";
+    }
+
+    removeDog() {
+        if (this.positionY % 20 === 0 && this.positionX <= -5) {
+            this.removeObstacle();
+        } else if (this.positionY % 20 !== 0 && this.positionX >= 95) {
+            this.removeObstacle();
+        }
+    }
+}
+
+/* class Obstacle {
   constructor() {
     this.positionX = null;
     this.positionY = Math.floor(Math.random() * 6) * 10 + 10;
@@ -95,9 +161,34 @@ class Obstacle {
     this.obstacleElm.remove();
   }
 
+} */
+
+class Dumpling extends Obstacle {
+    constructor() {
+        super();
+        this.positionX = Math.floor(Math.random() * 55);
+        this.positionY = Math.floor(Math.random() * 56 + 15);
+        this.width = 5;
+        this.height = 5;
+        this.className = "dumpling-prize";
+
+        this.createDumpling();
+        this.removeAuto();
+    }
+
+    createDumpling() {
+        this.createDomElement();
+        this.obstacleElm.style.left = this.positionX + 'vw';
+    }
+    
+    removeAuto() {
+        setInterval(() => {
+            this.removeObstacle();
+        }, 7000);
+    }
 }
 
-class Dumpling {
+/* class Dumpling {
     constructor() {
         this.dumplingElm = null;
         this.boardElm = document.getElementById("board");
@@ -108,7 +199,7 @@ class Dumpling {
         this.hasCollided = false;
 
         this.createDumplingElm();
-        this.removeDumplingElm();
+        this.removeDumplingElm(); // ONLY dump class 
     }
     
     // adding a new DOM element
@@ -131,17 +222,18 @@ class Dumpling {
     removeDumpling() {
         this.dumplingElm.remove(); //clean this up!!!
     }
-}
+} */
 
 
 class Game {
   constructor() {
     this.player = null;
-    this.obstaclesArr = [];
+    this.dogsArr = [];
     this.dumplingsArr = [];
     this.scoreElm = document.getElementById("score-count");
     this.livesCount = 3;
     this.livesElm = document.getElementById("lives-count");
+    // this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
 
     this.updateLives();
     
@@ -152,21 +244,22 @@ class Game {
 
     // interval to create divs
     setInterval(() => {
-      const myObstacle = new Obstacle();
-      myObstacle.getObstacleSettings(myObstacle);
-      this.obstaclesArr.push(myObstacle);
+      const dog = new Dog();
+      dog.getDogSettings(dog);
+      this.dogsArr.push(dog);
     }, 1000 * (Math.floor(Math.random() * 3) + 1)); // maybe revisit this to get timing right for obstacles
 
     // interval to move all the divs right or left 
+    // turn this into a cleaner loop function
     setInterval(() => {
-        this.obstaclesArr.forEach((obstacleInstance) => {
-            obstacleInstance.moveObstacle();
-            obstacleInstance.removeObstacle();
+        this.dogsArr.forEach((obstacleInstance) => {
+            obstacleInstance.moveDog();
+            obstacleInstance.removeDog();
             if (!obstacleInstance.hasCollided) {
                 if (this.detectCollision(obstacleInstance)) {
                     obstacleInstance.hasCollided = true;
                     this.livesCount--;
-                    obstacleInstance.removeObstElm();
+                    obstacleInstance.removeObstacle();
                     this.updateLives();
                     this.loseGame();
 ;                } 
@@ -217,7 +310,7 @@ class Game {
         if (!dumpling.hasCollided) {
             if (this.detectCollision(dumpling)) {
                 dumpling.hasCollided = true;
-                dumpling.removeDumpling();
+                dumpling.removeObstacle();
                 this.addPoints();
             }
         }
@@ -232,6 +325,7 @@ class Game {
 
   updateLives () {
     this.livesElm.innerText = this.livesCount.toString();
+    // this.lifeLossAudio.play();
   }
 
   loseGame() {

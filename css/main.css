@@ -39,12 +39,12 @@ body {
     bottom: 0;
 }
 
-.obstacle {
+.dog-obstacle {
     background-color: blueviolet;
     position: absolute;
 }
 
-.reward {
+.dumpling-prize {
     background-color: orange;
     position: absolute;
 }
