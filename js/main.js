@@ -133,9 +133,17 @@ class Dumpling extends Obstacle {
     }
 } 
 
-// class Bao extends Obstacle
+class Bao extends Dumpling {
+    constructor() {
+        super();
+        this.width = 6;
+        this.height = 10;
+        this.className = "bao-prize";
 
-// class Monstera extends Obstacle
+        this.createDumpling();
+    }
+}
+
 
 class Bullet extends Obstacle {
     constructor (positionX, positionY) {
@@ -177,6 +185,7 @@ class Game {
     this.dogsArr = [];
     this.dumplingsArr = [];
     this.bulletsArr = [];
+    this.baoArr = [];
     this.scoreElm = document.getElementById("score-count");
     this.livesCount = 3;
     this.livesElm = document.getElementById("lives-count");
@@ -193,7 +202,7 @@ class Game {
       const dog = new Dog();
       dog.getDogSettings(dog);
       this.dogsArr.push(dog);
-    }, 1000 * (Math.floor(Math.random() * 3) + 1)); // maybe revisit this to get timing right for obstacles
+    }, 1000 * (Math.floor(Math.random() * 4) + 1)); // maybe revisit this to get timing right for obstacles
 
     // interval to move all the divs right or left
     // turn this into a cleaner loop function
@@ -221,6 +230,15 @@ class Game {
     setInterval(() => {
       this.collectDumpling();
     }, 1);
+
+    setInterval(() => {
+        this.collectBao();
+      }, 1);
+
+    setInterval(() => {
+        const newBao = new Bao();
+        this.baoArr.push(newBao);
+    }, 11000);
 
     setInterval(() => {
       this.bulletsArr.forEach((bullet, index) => {
@@ -255,13 +273,15 @@ class Game {
         for (let j = arr2.length - 1; j >= 0 ; j--) {
             let obj1 = arr1[i];
             let obj2 = arr2[j];
-
+            if (!obj1.hasCollided) {
             if (this.detectCollision(obj1, obj2)) {
                     console.log(true);
                     obj1.removeObstacle();
                     obj2.removeObstacle();
+                    obj1.hasCollided = true;
                     this.addPoints(10);
-                }
+                } 
+            }
         } 
     } 
   }
@@ -290,6 +310,19 @@ class Game {
         }
       }
     });
+  }
+
+  collectBao() {
+    this.baoArr.forEach((bao) => {
+        if (!bao.hasCollided) {
+            if (this.detectCollision(this.player, bao)) {
+                bao.hasCollided = true;
+                bao.removeObstacle();
+                this.livesCount++;
+                this.updateLives();
+            }
+        }
+    })
   }
 
   shootBullet() {
