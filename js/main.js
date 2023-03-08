@@ -9,6 +9,7 @@ class Player {
 
         this.playerElm.style.width = this.width + 'vw';
         this.playerElm.style.height = this.height + 'vh';
+        this.playerElm.style.left = this.positionX + 'vw';
     }
 
     moveLeft(){ // modify the position of the player
@@ -107,62 +108,6 @@ class Dog extends Obstacle {
     }
 }
 
-/* class Obstacle {
-  constructor() {
-    this.positionX = null;
-    this.positionY = Math.floor(Math.random() * 6) * 10 + 10;
-    this.obstacleElm = null;
-    this.move = null;
-    this.width = 10;
-    this.height = 10;
-    this.hasCollided = false;
-
-    this.boardElm = document.getElementById("board");
-
-    this.createDomElement();
-  }
-
-  // adding a new DOM element
-  createDomElement() {
-    this.obstacleElm = document.createElement("div");
-    this.obstacleElm.className = "obstacle";
-
-    this.obstacleElm.style.bottom = this.positionY + "vh"; // will need to adjust this after I have made board smaller and centered in screen
-    this.obstacleElm.style.width = this.width + 'vw';
-    this.obstacleElm.style.height = this.height + 'vh';
-
-    this.boardElm.appendChild(this.obstacleElm);
-  }
-
-  getObstacleSettings() {
-    if (this.positionY % 20 === 0) {
-        this.positionX = 60; 
-        this.move = -1; // entering from right, moving left. should be removed at far left side.
-    } else {
-        this.positionX = -5;
-        this.move = 1; // entering from left, moving right. should be removed at far right side. 
-    }
-  }
-
-  moveObstacle() {
-    this.positionX += this.move;
-    this.obstacleElm.style.left = this.positionX + "vw";
-  }
-
-  removeObstacle() {
-    if (this.positionY % 20 === 0 && this.positionX <= -5) {
-        this.obstacleElm.remove();
-    } else if (this.positionY % 20 !== 0 && this.positionX >= 95) {
-        this.obstacleElm.remove();
-    }
-  }
-
-  removeObstElm() {
-    this.obstacleElm.remove();
-  }
-
-} */
-
 class Dumpling extends Obstacle {
     constructor() {
         super();
@@ -186,57 +131,58 @@ class Dumpling extends Obstacle {
             this.removeObstacle();
         }, 7000);
     }
+} 
+
+// class Bao extends Obstacle
+
+// class Monstera extends Obstacle
+
+class Bullet extends Obstacle {
+    constructor (positionX, positionY) {
+        super();
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.width = 1;
+        this.height = 2;
+        this.className = "bullet";
+
+        this.createBullet();
+    }
+
+    createBullet() {
+        this.createDomElement();
+        this.obstacleElm.style.left = this.positionX + 'vw';
+        this.obstacleElm.style.bottom = this.positionY + 'vh';
+    }
+
+    moveBullet() {
+        if (this.positionY <= 68) {
+            this.positionY += 2;
+        }
+        this.obstacleElm.style.bottom = this.positionY + 'vh';
+    }
+
+    /* bulletLoop
+        - create bullet (one time)
+        - move bullet (continuously)
+        - detect for collision
+        - remove itself once collision detected
+        - remove dog if collision detected
+        - increase points (+10) */
 }
-
-/* class Dumpling {
-    constructor() {
-        this.dumplingElm = null;
-        this.boardElm = document.getElementById("board");
-        this.positionX = Math.floor(Math.random() * 55);
-        this.positionY = Math.floor(Math.random() * 56 + 15);
-        this.width = 5;
-        this.height = 5;
-        this.hasCollided = false;
-
-        this.createDumplingElm();
-        this.removeDumplingElm(); // ONLY dump class 
-    }
-    
-    // adding a new DOM element
-    createDumplingElm() {
-        this.dumplingElm = document.createElement('div');
-        this.dumplingElm.className = 'reward';
-        this.dumplingElm.style.bottom = this.positionY + 'vh';
-        this.dumplingElm.style.left = this.positionX + 'vw';
-        this.dumplingElm.style.width = this.width + 'vw';
-        this.dumplingElm.style.height = this.height + 'vh';
-        this.boardElm.appendChild(this.dumplingElm);
-    }
-
-    removeDumplingElm() {
-        setInterval(() => {
-            this.dumplingElm.remove();
-        }, 7000);
-    }
-
-    removeDumpling() {
-        this.dumplingElm.remove(); //clean this up!!!
-    }
-} */
-
 
 class Game {
   constructor() {
     this.player = null;
     this.dogsArr = [];
     this.dumplingsArr = [];
+    this.bulletsArr = [];
     this.scoreElm = document.getElementById("score-count");
     this.livesCount = 3;
     this.livesElm = document.getElementById("lives-count");
     // this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
 
     this.updateLives();
-    
   }
   start() {
     this.player = new Player();
@@ -249,33 +195,43 @@ class Game {
       this.dogsArr.push(dog);
     }, 1000 * (Math.floor(Math.random() * 3) + 1)); // maybe revisit this to get timing right for obstacles
 
-    // interval to move all the divs right or left 
+    // interval to move all the divs right or left
     // turn this into a cleaner loop function
     setInterval(() => {
-        this.dogsArr.forEach((obstacleInstance) => {
-            obstacleInstance.moveDog();
-            obstacleInstance.removeDog();
-            if (!obstacleInstance.hasCollided) {
-                if (this.detectCollision(obstacleInstance)) {
-                    obstacleInstance.hasCollided = true;
-                    this.livesCount--;
-                    obstacleInstance.removeObstacle();
-                    this.updateLives();
-                    this.loseGame();
-;                } 
-            }
-        })
+      this.dogsArr.forEach((obstacleInstance) => {
+        obstacleInstance.moveDog();
+        obstacleInstance.removeDog();
+        if (!obstacleInstance.hasCollided) {
+          if (this.detectCollision(this.player, obstacleInstance)) {
+            obstacleInstance.hasCollided = true;
+            this.livesCount--;
+            obstacleInstance.removeObstacle();
+            this.updateLives();
+            this.loseGame();
+          }
+        }
+      });
     }, 100);
 
     setInterval(() => {
-        const newDumpling = new Dumpling();
-        this.dumplingsArr.push(newDumpling);
+      const newDumpling = new Dumpling();
+      this.dumplingsArr.push(newDumpling);
     }, 3000);
 
     setInterval(() => {
-        this.collectDumpling() 
-        }, 1);
-    
+      this.collectDumpling();
+    }, 1);
+
+    setInterval(() => {
+      this.bulletsArr.forEach((bullet, index) => {
+        bullet.moveBullet();
+        if (bullet.positionY > 66) {
+          bullet.removeObstacle();
+          this.bulletsArr.splice(index, 1);
+        }
+      });
+      this.checkBulletHit(this.bulletsArr, this.dogsArr);
+    }, 25);
   }
 
   attachEventListeners() {
@@ -288,52 +244,75 @@ class Game {
         this.player.moveUp();
       } else if (e.key === "ArrowDown") {
         this.player.moveDown();
+      } else if (e.key === " ") {
+        this.shootBullet();
       }
     });
   }
-  
-  detectCollision(object) {
+
+   checkBulletHit(arr1, arr2) {
+    for (let i = arr1.length - 1; i >= 0; i--) {
+        for (let j = arr2.length - 1; j >= 0 ; j--) {
+            let obj1 = arr1[i];
+            let obj2 = arr2[j];
+
+            if (this.detectCollision(obj1, obj2)) {
+                    console.log(true);
+                    obj1.removeObstacle();
+                    obj2.removeObstacle();
+                    this.addPoints(10);
+                }
+        } 
+    } 
+  }
+
+  detectCollision(obj1, obj2) {
     if (
-        this.player.positionX < object.positionX + object.width &&
-        this.player.positionX + this.player.width > object.positionX &&
-        this.player.positionY < object.positionY + object.height &&
-        this.player.height + this.player.positionY > object.positionY
+      obj1.positionX < obj2.positionX + obj2.width &&
+      obj1.positionX + obj1.width > obj2.positionX &&
+      obj1.positionY < obj2.positionY + obj2.height &&
+      obj1.height + obj1.positionY > obj2.positionY
     ) {
-        return true;
+      return true;
     } else {
-        return false;
+      return false;
     }
   }
 
-  collectDumpling() { // clean this up!!
+  collectDumpling() {
+    // clean this up!!
     this.dumplingsArr.forEach((dumpling) => {
-        if (!dumpling.hasCollided) {
-            if (this.detectCollision(dumpling)) {
-                dumpling.hasCollided = true;
-                dumpling.removeObstacle();
-                this.addPoints();
-            }
+      if (!dumpling.hasCollided) {
+        if (this.detectCollision(this.player, dumpling)) {
+          dumpling.hasCollided = true;
+          dumpling.removeObstacle();
+          this.addPoints(20);
         }
+      }
     });
   }
 
-  addPoints() {
-    const addPoints = parseInt(this.scoreElm.textContent, 10) + 20;
+  shootBullet() {
+    const bullet = new Bullet(this.player.positionX + 2, this.player.positionY + 5);
+    this.bulletsArr.push(bullet);
+  }
+
+  addPoints(num) {
+    const addPoints = parseInt(this.scoreElm.textContent, 10) + num;
     this.scoreElm.innerText = addPoints.toString();
     return addPoints;
   }
 
-  updateLives () {
+  updateLives() {
     this.livesElm.innerText = this.livesCount.toString();
     // this.lifeLossAudio.play();
   }
 
   loseGame() {
     if (this.livesCount === 0) {
-        window.location.href = "./gameover.html";
+      window.location.href = "./gameover.html";
     }
   }
-
 }
 
 const newGame = new Game();
