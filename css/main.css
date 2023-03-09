@@ -1,10 +1,31 @@
-@font-face {
-    font-family: arcadeFont;
-    src: url(arcade-font.ttf);
-}
+@import url('https://fonts.googleapis.com/css2?family=Rampart+One&display=swap');
 
 #title {
-    font-family: arcadeFont;
+    font-size: 70px;
+}
+
+.cat-img {
+    width: 90px;
+}
+
+#about {
+    font-size: 25px;
+    padding: 20px 120px;
+}
+
+.icon {
+    width: 80px;
+}
+
+.instructions {
+    display: flex;
+    align-items: center; 
+    justify-content: space-around;
+    width: 40vw;
+    margin-bottom: 50px;
+    background-color: rgba(255,255,255, 0.8);
+    border-radius: 20%;
+    font-size: 18px;
 }
 
 #intro-page {
@@ -20,22 +41,35 @@
     border-radius: 5%;
     z-index: 3;
     background-color: burlywood;
+    box-shadow: 0px 0px 2px 2px;
 }
 
 #gameover {
+    font-size: 40px;
     width: 60vw;
     height: 80vh;
     margin: 8vh auto;
     position: absolute;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
     text-align: center;
     align-items: center;
     border-radius: 5%;
     visibility: hidden;
-    background-color: darkgoldenrod;
+    background-color: rgb(184, 134, 11);
     z-index: 4;
+    box-shadow: 0px 0px 2px 2px;
+}
+
+#gameover img {
+    width: 300px;
+}
+
+#gameover h3 {
+    background-color: rgba(255,255,255, 0.8);
+    border-radius: 20%;
+    padding: 20px 40px;
 }
 
 body {
@@ -45,7 +79,29 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-family: 'Rampart One';
 }
+
+button {
+    display: inline-block;
+    font-size: 18px;
+    padding: 0.35em 1.2em;
+    border: 0.1em solid #FFFFFF;
+    margin: 0 0.3em 0.3em 0;
+    border-radius: 0.12em;
+    box-sizing: border-box;
+    text-decoration:none;
+    font-weight:300;
+    color:#000000;
+    text-align:center;
+    transition: all 0.2s;
+    font-family: 'Rampart One';
+}
+
+button:hover{
+        color: white;
+        background-color:#FFFFFF;
+    }
 
 #game {
     display:flex;
@@ -66,6 +122,13 @@ body {
     visibility: hidden;
 }
 
+#scoreboard p {
+    background-color: rgba(255, 0, 0, 0.6);
+    border-radius: 8%;
+    padding: 10px;
+    font-weight: bold;
+}
+
 #board {
     width: 60vw;
     height: 70vh;
@@ -78,10 +141,10 @@ body {
 }
 
 #player {
-    background-color: cyan;
-    background-image: url("../images/cat-cartoon.jpeg");
+    background-image: url("../images/player-dumpling.png");
     background-size: 100% 100%;
     position: absolute;
+    background-color: coral;
     bottom: 0;
 }
 

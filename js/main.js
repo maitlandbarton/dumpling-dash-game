@@ -3,7 +3,7 @@ class Player {
     constructor(){
         this.positionX = 26;
         this.positionY = 0;
-        this.width = 4;
+        this.width = 5;
         this.height = 10;
 
         this.playerElm = document.getElementById("player");
@@ -73,7 +73,7 @@ class Obstacle {
     }
 }
 
-class Dog extends Obstacle { // ADJUST SIZING TO BETTER FIT PUG
+class Dog extends Obstacle { 
     constructor() {
         super();
         this.positionY = Math.floor(Math.random() * 6) * 10 + 10;
@@ -114,7 +114,7 @@ class Dumpling extends Obstacle {
     constructor() {
         super();
         this.positionX = Math.floor(Math.random() * 55);
-        this.positionY = Math.floor(Math.random() * 56 + 15);
+        this.positionY = Math.floor(Math.random() * 51 + 15);
         this.width = 5;
         this.height = 5;
         this.className = "dumpling-prize";
@@ -134,18 +134,6 @@ class Dumpling extends Obstacle {
         }, 7000);
     }
 } 
-
- /* class Bao extends Dumpling {
-    constructor() {
-        super();
-        this.width = 6;
-        this.height = 10;
-        this.className = "bao-prize";
-
-        this.createDumpling();
-    }
-} */ 
-
 
 class Bullet extends Obstacle {
     constructor (positionX, positionY) {
@@ -171,14 +159,6 @@ class Bullet extends Obstacle {
         }
         this.obstacleElm.style.bottom = this.positionY + 'vh';
     }
-
-    /* bulletLoop
-        - create bullet (one time)
-        - move bullet (continuously)
-        - detect for collision
-        - remove itself once collision detected
-        - remove dog if collision detected
-        - increase points (+10) */
 }
 
 class Game {
@@ -187,17 +167,18 @@ class Game {
     this.dogsArr = [];
     this.dumplingsArr = [];
     this.bulletsArr = [];
-    this.baoArr = [];
     this.gameOver = document.querySelector('#gameover');
     this.scoreElm = document.getElementById("score-count");
     this.livesCount = 3;
-    this.dogInterval = null;
+    this.dogInterval = null; // create a get Intervals method
     this.moveDogInterval = null;
     this.makeDumplingInterval = null;
     this.collectRewardsInterval = null;
     this.bulletInterval = null;
     this.livesElm = document.getElementById("lives-count");
-    // this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
+    this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
+    this.swallowAudio = new Audio("./sounds/swallow.mp3");
+    this.loseAudio = new Audio("./sounds/lose-game.wav");
 
     this.updateLives();
   }
@@ -213,7 +194,7 @@ class Game {
       const dog = new Dog();
       dog.getDogSettings(dog);
       this.dogsArr.push(dog);
-    }, 500 * (Math.floor(Math.random() * 5) + 2)); // maybe revisit this to get timing right for obstacles
+    }, 500 * (Math.floor(Math.random() * 5) + 2));
 
     // interval to move all the divs right or left
     // turn this into a cleaner loop function
@@ -227,6 +208,7 @@ class Game {
             this.livesCount--;
             obstacleInstance.removeObstacle();
             this.updateLives();
+            this.lifeLossAudio.play();
             this.loseGame();
           }
         }
@@ -241,11 +223,6 @@ class Game {
     this.collectRewardsInterval = setInterval(() => {
       this.collectElements();
     }, 1);
-
-    /* setInterval(() => {
-        const newBao = new Bao();
-        this.baoArr.push(newBao);
-    }, 1000 * (Math.floor(Math.random() * 5) + 18)); */
 
     this.bulletInterval = setInterval(() => {
       this.bulletsArr.forEach((bullet, index) => {
@@ -313,43 +290,10 @@ class Game {
             dumpling.hasCollided = true;
             dumpling.removeObstacle();
             this.addPoints(20);
+            this.swallowAudio.play();
         }
     });
-
-    /* this.baoArr.forEach((bao) => {
-        if (!bao.hasCollided && this.detectCollision(this.player, bao)) {
-            bao.hasCollided = true;
-            bao.removeObstacle();
-            this.livesCount++;
-            this.updateLives();
-        }
-    }); */
   }
-
-  /* collectDumpling() {
-    this.dumplingsArr.forEach((dumpling) => {
-      if (!dumpling.hasCollided) {
-        if (this.detectCollision(this.player, dumpling)) {
-          dumpling.hasCollided = true;
-          dumpling.removeObstacle();
-          this.addPoints(20);
-        }
-      }
-    });
-  }
-
-  collectBao() {
-    this.baoArr.forEach((bao) => {
-        if (!bao.hasCollided) {
-            if (this.detectCollision(this.player, bao)) {
-                bao.hasCollided = true;
-                bao.removeObstacle();
-                this.livesCount++;
-                this.updateLives();
-            }
-        }
-    })
-  } */
 
   shootBullet() {
     const bullet = new Bullet(this.player.positionX + 2, this.player.positionY + 5);
@@ -364,7 +308,6 @@ class Game {
 
   updateLives() {
     this.livesElm.innerText = this.livesCount.toString();
-    // this.lifeLossAudio.play();
   }
 
   loseGame() {
@@ -372,23 +315,13 @@ class Game {
       this.gameOver.style.visibility = 'visible';
       document.querySelector('#final-score').innerText = this.scoreElm.innerText;
       document.querySelector('#scoreboard').style.visibility = 'hidden';
-      /*clearInterval(this.dogInterval);
-      clearInterval(this.bulletInterval);
-      clearInterval(this.collectRewardsInterval);
-      clearInterval(this.makeDumplingInterval);
-      clearInterval(this.moveDogInterval);
-      this.bulletsArr = []; */
+      this.lifeLossAudio = null; // make a killAudio function and a getAudio function
+      this.swallowAudio = null;
+      this.loseAudio.play();
     }
   }
 }
 
-/* stopGame() {
-    clearInterval(this.intervalId);
-    board.innerHTML = "";
-    this.controller.abort();
-    info.forEach((box) => box.classList.add("hide"));
-    this.gameAudio.pause();
-  } */
 
 const startPage = document.querySelector('#intro-page');
 const startBtn = document.querySelector('#start-btn');
@@ -405,12 +338,3 @@ startBtn.addEventListener("click", () => {
 playAgainBtn.addEventListener("click", () => {
     window.location.reload();
 })
-
-// const newGame = new Game();
-// newGame.start();
-
-/* startBtn.addEventListener("click", () => {
-  startScreen.classList.add("hide");
-  game = new Game();
-  game.start();
-}); */
