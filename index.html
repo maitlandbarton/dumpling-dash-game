@@ -10,7 +10,23 @@
 </head>
 <body>
 
-    <div id="container">
+    <!-- starting game page  -->
+    <div id="intro-page">
+        <div id="title">
+            <h1>Dumpling Dash</h1>
+            <button id="start-btn">Start Game</button>
+        </div>
+
+
+        <div class="instructions">
+            <h4>Help Dumpling collect the dumplings that the dogs are hoarding!</h4>
+            <p>Move: Left/Right/Up/Down Arrow Keys</p>
+            <p>Throw poo at the dogs: Spacebar</p>
+        </div>
+    </div>
+
+    <!-- the game board -->
+    <div id="game" class="window">
         <section id="scoreboard">
             <p class="lives">LIVES: <span id="lives-count">  </span></p>
             <p class="score">SCORE: <span id="score-count"> 0 </span></p>
@@ -19,6 +35,14 @@
             <div id="player"></div>
         </div>
     </div>
+    
+    <!-- gameover popup -->
+    <div id="gameover" class="window">
+        <h1>GAME OVER!</h1>
+        <h3>Final Score: <span id="final-score"></span> </h3>
+        <button id="play-again-btn"> Play Again </button>
+    </div>
+
 
 
     <script src="./js/main.js"></script>    

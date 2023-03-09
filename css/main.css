@@ -1,17 +1,59 @@
+@font-face {
+    font-family: arcadeFont;
+    src: url(arcade-font.ttf);
+}
+
+#title {
+    font-family: arcadeFont;
+}
+
+#intro-page {
+    width: 60vw;
+    height: 80vh;
+    margin: 8vh auto;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    border-radius: 5%;
+    z-index: 3;
+    background-color: burlywood;
+}
+
+#gameover {
+    width: 60vw;
+    height: 80vh;
+    margin: 8vh auto;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    text-align: center;
+    align-items: center;
+    border-radius: 5%;
+    visibility: hidden;
+    background-color: darkgoldenrod;
+    z-index: 4;
+}
+
 body {
-    background-color: skyblue;
+    background-image: url("../images/fluffy-bg.jpeg");
+    background-size: 100% 100%;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    
 }
 
-#container {
+#game {
     display:flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    position: relative;
+    z-index: 1;
 }
 
 #scoreboard {
@@ -21,12 +63,14 @@ body {
     width: 50vw;
     padding: 0;
     margin-top: 5vh;
+    visibility: hidden;
 }
 
 #board {
     width: 60vw;
     height: 70vh;
-    background-color: lightcoral;
+    background-image: url(../images/checkerboard-bg.png);
+    background-size: 100% 100%;
     position: relative;
     margin: 0 auto;
     overflow: hidden;
@@ -35,22 +79,27 @@ body {
 
 #player {
     background-color: cyan;
+    background-image: url("../images/cat-cartoon.jpeg");
+    background-size: 100% 100%;
     position: absolute;
     bottom: 0;
 }
 
 .dog-obstacle {
-    background-color: blueviolet;
+    background-image: url("../images/pug-running.png");
+    background-size: 100% 100%;
     position: absolute;
 }
 
 .dumpling-prize {
-    background-color: orange;
+    background-image: url(../images/dumpling-emoji.png);
+    background-size: 100% 100%;
     position: absolute;
 }
 
 .bullet {
-    background-color: brown;
+    background-image: url(../images/poo-emoji.png);
+    background-size: 100% 100%;
     position: absolute;
 }
 

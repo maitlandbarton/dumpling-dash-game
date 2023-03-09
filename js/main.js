@@ -1,3 +1,4 @@
+
 class Player {
     constructor(){
         this.positionX = 26;
@@ -28,14 +29,14 @@ class Player {
 
     moveUp(){
         if (this.positionY <= 58) {
-            this.positionY += 2; 
+            this.positionY += 3; 
         }
         this.playerElm.style.bottom = this.positionY + 'vh';
     }
 
     moveDown(){
         if (this.positionY > 0) {
-            this.positionY -= 2;
+            this.positionY -= 3;
         }
         this.playerElm.style.bottom = this.positionY + 'vh';
     }
@@ -72,12 +73,12 @@ class Obstacle {
     }
 }
 
-class Dog extends Obstacle {
+class Dog extends Obstacle { // ADJUST SIZING TO BETTER FIT PUG
     constructor() {
         super();
         this.positionY = Math.floor(Math.random() * 6) * 10 + 10;
-        this.width = 10;
-        this.height = 10;
+        this.width = 12;
+        this.height = 9;
         this.className = "dog-obstacle";
         
         this.move = null;
@@ -87,10 +88,11 @@ class Dog extends Obstacle {
     getDogSettings() {
         if (this.positionY % 20 === 0) {
             this.positionX = 60;
-            this.move = -1;
+            this.move = -((Math.random() * 2.5) + 1);
         } else {
             this.positionX = -5;
-            this.move = 1;
+            this.move = (Math.random() * 2.5) + 1;
+            this.obstacleElm.style.backgroundImage = `url("../images/pug-running-right.png")`
         }
     }
 
@@ -133,7 +135,7 @@ class Dumpling extends Obstacle {
     }
 } 
 
-class Bao extends Dumpling {
+ /* class Bao extends Dumpling {
     constructor() {
         super();
         this.width = 6;
@@ -142,7 +144,7 @@ class Bao extends Dumpling {
 
         this.createDumpling();
     }
-}
+} */ 
 
 
 class Bullet extends Obstacle {
@@ -150,8 +152,8 @@ class Bullet extends Obstacle {
         super();
         this.positionX = positionX;
         this.positionY = positionY;
-        this.width = 1;
-        this.height = 2;
+        this.width = 3;
+        this.height = 3;
         this.className = "bullet";
 
         this.createBullet();
@@ -165,7 +167,7 @@ class Bullet extends Obstacle {
 
     moveBullet() {
         if (this.positionY <= 68) {
-            this.positionY += 2;
+            this.positionY += 1;
         }
         this.obstacleElm.style.bottom = this.positionY + 'vh';
     }
@@ -186,8 +188,14 @@ class Game {
     this.dumplingsArr = [];
     this.bulletsArr = [];
     this.baoArr = [];
+    this.gameOver = document.querySelector('#gameover');
     this.scoreElm = document.getElementById("score-count");
     this.livesCount = 3;
+    this.dogInterval = null;
+    this.moveDogInterval = null;
+    this.makeDumplingInterval = null;
+    this.collectRewardsInterval = null;
+    this.bulletInterval = null;
     this.livesElm = document.getElementById("lives-count");
     // this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
 
@@ -196,17 +204,20 @@ class Game {
   start() {
     this.player = new Player();
     this.attachEventListeners();
+    this.scoreElm.innerText = '0';
+    document.querySelector('#scoreboard').style.visibility = 'visible';
+    
 
     // interval to create divs
-    setInterval(() => {
+    this.dogInterval = setInterval(() => {
       const dog = new Dog();
       dog.getDogSettings(dog);
       this.dogsArr.push(dog);
-    }, 1000 * (Math.floor(Math.random() * 4) + 1)); // maybe revisit this to get timing right for obstacles
+    }, 500 * (Math.floor(Math.random() * 5) + 2)); // maybe revisit this to get timing right for obstacles
 
     // interval to move all the divs right or left
     // turn this into a cleaner loop function
-    setInterval(() => {
+    this.moveDogInterval = setInterval(() => {
       this.dogsArr.forEach((obstacleInstance) => {
         obstacleInstance.moveDog();
         obstacleInstance.removeDog();
@@ -222,25 +233,21 @@ class Game {
       });
     }, 100);
 
-    setInterval(() => {
+    this.makeDumplingInterval = setInterval(() => {
       const newDumpling = new Dumpling();
       this.dumplingsArr.push(newDumpling);
     }, 3000);
 
-    setInterval(() => {
-      this.collectDumpling();
+    this.collectRewardsInterval = setInterval(() => {
+      this.collectElements();
     }, 1);
 
-    setInterval(() => {
-        this.collectBao();
-      }, 1);
-
-    setInterval(() => {
+    /* setInterval(() => {
         const newBao = new Bao();
         this.baoArr.push(newBao);
-    }, 11000);
+    }, 1000 * (Math.floor(Math.random() * 5) + 18)); */
 
-    setInterval(() => {
+    this.bulletInterval = setInterval(() => {
       this.bulletsArr.forEach((bullet, index) => {
         bullet.moveBullet();
         if (bullet.positionY > 66) {
@@ -249,7 +256,7 @@ class Game {
         }
       });
       this.checkBulletHit(this.bulletsArr, this.dogsArr);
-    }, 25);
+    }, 20);
   }
 
   attachEventListeners() {
@@ -273,18 +280,18 @@ class Game {
         for (let j = arr2.length - 1; j >= 0 ; j--) {
             let obj1 = arr1[i];
             let obj2 = arr2[j];
-            if (!obj1.hasCollided) {
             if (this.detectCollision(obj1, obj2)) {
-                    console.log(true);
+                if (!obj1.hasCollided) {
                     obj1.removeObstacle();
-                    obj2.removeObstacle();
                     obj1.hasCollided = true;
                     this.addPoints(10);
+                }
+                    obj2.removeObstacle();
+                    obj2.obstacleElm.splice(obj2, 1);
                 } 
-            }
+            } 
         } 
     } 
-  }
 
   detectCollision(obj1, obj2) {
     if (
@@ -299,8 +306,27 @@ class Game {
     }
   }
 
-  collectDumpling() {
-    // clean this up!!
+
+  collectElements() {
+    this.dumplingsArr.forEach((dumpling) => {
+        if (!dumpling.hasCollided && this.detectCollision(this.player, dumpling)) {
+            dumpling.hasCollided = true;
+            dumpling.removeObstacle();
+            this.addPoints(20);
+        }
+    });
+
+    /* this.baoArr.forEach((bao) => {
+        if (!bao.hasCollided && this.detectCollision(this.player, bao)) {
+            bao.hasCollided = true;
+            bao.removeObstacle();
+            this.livesCount++;
+            this.updateLives();
+        }
+    }); */
+  }
+
+  /* collectDumpling() {
     this.dumplingsArr.forEach((dumpling) => {
       if (!dumpling.hasCollided) {
         if (this.detectCollision(this.player, dumpling)) {
@@ -323,7 +349,7 @@ class Game {
             }
         }
     })
-  }
+  } */
 
   shootBullet() {
     const bullet = new Bullet(this.player.positionX + 2, this.player.positionY + 5);
@@ -343,11 +369,48 @@ class Game {
 
   loseGame() {
     if (this.livesCount === 0) {
-      window.location.href = "./gameover.html";
+      this.gameOver.style.visibility = 'visible';
+      document.querySelector('#final-score').innerText = this.scoreElm.innerText;
+      document.querySelector('#scoreboard').style.visibility = 'hidden';
+      /*clearInterval(this.dogInterval);
+      clearInterval(this.bulletInterval);
+      clearInterval(this.collectRewardsInterval);
+      clearInterval(this.makeDumplingInterval);
+      clearInterval(this.moveDogInterval);
+      this.bulletsArr = []; */
     }
   }
 }
 
-const newGame = new Game();
-newGame.start();
+/* stopGame() {
+    clearInterval(this.intervalId);
+    board.innerHTML = "";
+    this.controller.abort();
+    info.forEach((box) => box.classList.add("hide"));
+    this.gameAudio.pause();
+  } */
 
+const startPage = document.querySelector('#intro-page');
+const startBtn = document.querySelector('#start-btn');
+
+const playAgainBtn = document.querySelector('#play-again-btn');
+
+
+startBtn.addEventListener("click", () => {
+    startPage.style.display = "none";
+    let game = new Game;
+    game.start();
+})
+
+playAgainBtn.addEventListener("click", () => {
+    window.location.reload();
+})
+
+// const newGame = new Game();
+// newGame.start();
+
+/* startBtn.addEventListener("click", () => {
+  startScreen.classList.add("hide");
+  game = new Game();
+  game.start();
+}); */
