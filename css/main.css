@@ -144,7 +144,6 @@ button:hover{
     background-image: url("../images/player-dumpling.png");
     background-size: 100% 100%;
     position: absolute;
-    background-color: coral;
     bottom: 0;
 }
 
