@@ -75,7 +75,7 @@ class Dog extends Obstacle {
         this.height = 9;
         this.className = "dog-obstacle";
         this.move = null;
-        
+
         this.createDomElement();
     }
     
