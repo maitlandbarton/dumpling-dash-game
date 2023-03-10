@@ -29,7 +29,7 @@ class Game {
         dogInstance.moveDog();
         dogInstance.removeDog();
         // dogCollide(obj) function?
-        if (!dogInstance.hasCollided) {
+        if (!dogInstance.hasCollided && !dogInstance.hasBeenShot) {
           if (this.detectCollision(this.player, dogInstance)) {
             dogInstance.hasCollided = true;
             this.livesCount--;
@@ -63,7 +63,7 @@ class Game {
         }
       });
       this.checkBulletHit(this.bulletsArr, this.dogsArr);
-    }, 20);
+    }, 10);
   }
 
   attachEventListeners() {
@@ -116,10 +116,12 @@ class Game {
                 if (!obj1.hasCollided) {
                     obj1.removeObstacle();
                     obj1.hasCollided = true;
+                    obj1.hasBeenShot = true;
+                    console.log(obj1.hasCollided);
                     this.addPoints(10);
+                    this.splatAudio.play();
                 }
                     obj2.removeObstacle();
-                    obj2.obstacleElm.splice(obj2, 1);
                 } 
             } 
         } 
@@ -164,6 +166,7 @@ class Game {
     this.lifeLossAudio = new Audio("./sounds/lost-life-meow.wav");
     this.swallowAudio = new Audio("./sounds/swallow.mp3");
     this.loseAudio = new Audio("./sounds/lose-game.wav");
+    this.splatAudio = new Audio("./sounds/cartoon-splat.mp3");
   }
 
   getElements() {

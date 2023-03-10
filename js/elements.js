@@ -75,6 +75,7 @@ class Dog extends Obstacle {
         this.height = 9;
         this.className = "dog-obstacle";
         this.move = null;
+        this.hasBeenShot = false;
 
         this.createDomElement();
     }
@@ -149,7 +150,7 @@ class Bullet extends Obstacle {
 
     moveBullet() {
         if (this.positionY <= 68) {
-            this.positionY += 1;
+            this.positionY += 0.5;
         }
         this.obstacleElm.style.bottom = this.positionY + 'vh';
     }
