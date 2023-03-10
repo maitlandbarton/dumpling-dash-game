@@ -86,7 +86,7 @@ class Dog extends Obstacle {
         } else {
             this.positionX = -5;
             this.move = (Math.random() * 2.5) + 1;
-            this.obstacleElm.style.backgroundImage = "url(../images/pug-running-right.png)"
+            this.obstacleElm.style.backgroundImage = `url("./images/pug-running-right.png")`
         }
     }
 
