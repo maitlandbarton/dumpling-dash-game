@@ -53,7 +53,6 @@ class Game {
       this.collectElements();
     }, 1);
 
-    // move bullet, detect bullet collision
     setInterval(() => {
       this.bulletsArr.forEach((bullet, index) => {
         bullet.moveBullet();
@@ -127,11 +126,6 @@ class Game {
         } 
     } 
 
-  
-
-  
-  
-
   shootBullet() {
     const bullet = new Bullet(this.player.positionX + 2, this.player.positionY + 5);
     this.bulletsArr.push(bullet);
@@ -170,7 +164,6 @@ class Game {
   }
 
   getElements() {
-    // CHECK THAT THIS IS WORKING -- MAY NEED TO CALL IT AT START
     this.gameOver = document.querySelector('#gameover');
     this.scoreElm = document.getElementById("score-count");
     this.livesElm = document.getElementById("lives-count");
@@ -184,7 +177,6 @@ const startPage = document.querySelector('#intro-page');
 const startBtn = document.querySelector('#start-btn');
 const playAgainBtn = document.querySelector('#play-again-btn');
 
-// give bunctions functionality
 startBtn.addEventListener("click", () => {
     startPage.style.display = "none";
     let game = new Game;

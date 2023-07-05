@@ -11,7 +11,7 @@ class Player {
         this.playerElm.style.height = this.height + 'vh';
         this.playerElm.style.left = this.positionX + 'vw';
     }
-    // move player 
+    
     moveLeft(){
         if (this.positionX > 0) {
             this.positionX -= 2;
